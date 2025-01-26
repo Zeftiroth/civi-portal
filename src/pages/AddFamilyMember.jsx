@@ -72,11 +72,7 @@ const AddFamilyMember = () => {
         top: "72px",
       }}
     >
-      <Box sx={{ p: 3 }}>
-        {/* Header */}
-        <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
-          Clients / Add Family Member
-        </Typography>
+      <Box sx={{ p: 4 }}>
 
         <Box
           sx={{
