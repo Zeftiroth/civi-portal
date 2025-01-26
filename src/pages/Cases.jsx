@@ -9,6 +9,14 @@ import {
   TableRow,
   TableCell,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 
 const mockData = [
@@ -56,9 +64,46 @@ const mockData = [
 
 const Cases = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [open, setOpen] = useState(false);
+  const [newCase, setNewCase] = useState({
+    contactName: "",
+    caseName: "",
+    status: "",
+    priority: "",
+  });
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewCase((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = () => {
+    // Generate a new case number based on the length of the existing cases
+    const newCaseNumber = (mockData.length + 1).toString().padStart(3, '0');
+    // Add the new case to the mock data with the current date as createdAt and generated case number
+    const newCaseWithDateAndNumber = {
+      ...newCase,
+      caseNumber: newCaseNumber,
+      createdAt: new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
+    };
+    mockData.push(newCaseWithDateAndNumber);
+    // Close the modal
+    handleClose();
   };
 
   const filteredData = mockData.filter((caseItem) =>
@@ -77,19 +122,17 @@ const Cases = () => {
           p: 2,
         }}
       >
-          <Button variant="contained" color="primary">
-            Create New Case
-          </Button>
-        <Box>
-          <TextField
-            label="Search Cases"
-            variant="outlined"
-            size="small"
-            value={searchTerm}
-            onChange={handleSearchChange}
-            sx={{ mr: 2 }}
-          />
-        </Box>
+        <Button variant="contained" color="primary" onClick={handleOpen}>
+          New Case
+        </Button>
+        <TextField
+          label="Search Cases"
+          variant="outlined"
+          size="small"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          sx={{ mr: 2 }}
+        />
       </Box>
       <Box id="cases-table" sx={{ p: 2 }}>
         <Table>
@@ -117,6 +160,55 @@ const Cases = () => {
           </TableBody>
         </Table>
       </Box>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Create New Case</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            label="Contact Name"
+            name="contactName"
+            value={newCase.contactName}
+            onChange={handleInputChange}
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            label="Case Name"
+            name="caseName"
+            value={newCase.caseName}
+            onChange={handleInputChange}
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            label="Status"
+            name="status"
+            value={newCase.status}
+            onChange={handleInputChange}
+            fullWidth
+          />
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Priority</InputLabel>
+            <Select
+              name="priority"
+              value={newCase.priority}
+              onChange={handleInputChange}
+            >
+              <MenuItem value="High">High</MenuItem>
+              <MenuItem value="Medium">Medium</MenuItem>
+              <MenuItem value="Low">Low</MenuItem>
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
