@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -6,6 +6,7 @@ import {
   TextField,
   Typography,
   Link as MuiLink,
+  Alert,
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -18,9 +19,24 @@ const validationSchema = yup.object({
   password: yup.string().required("Password is required"),
 });
 
+const loginUser = async (values, dispatch, navigate, setError) => {
+  try {
+    const response = await axios.post("https://cmsservice-9e12a2790a1c.herokuapp.com/users/login", values);
+    const userData = response.data;
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("isLoggedIn", "true");
+    dispatch(setUser(userData));
+    navigate("/");
+  } catch (error) {
+    console.error("Error during login:", error);
+    setError("Error during login");
+  }
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
@@ -36,23 +52,8 @@ const Login = () => {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      // Retrieve user data from localStorage
-      const storedUser = JSON.parse(localStorage.getItem("user"));
-
-      if (
-        storedUser &&
-        storedUser.username === values.username &&
-        storedUser.password === values.password
-      ) {
-        // Store login status in localStorage
-        localStorage.setItem("isLoggedIn", "true");
-        // Dispatch action to save user info to the store
-        dispatch(setUser(storedUser));
-        // Redirect to the main content
-        navigate("/");
-      } else {
-        alert("Invalid username or password");
-      }
+      setError("");
+      loginUser(values, dispatch, navigate, setError);
     },
   });
 
@@ -113,6 +114,7 @@ const Login = () => {
           </MuiLink>
         </Box>
       </Box>
+       {error && <Alert sx={{my: 2}} severity="error">{error}</Alert>}
     </Container>
   );
 };

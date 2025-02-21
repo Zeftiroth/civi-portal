@@ -6,16 +6,19 @@ import {
   TextField,
   Typography,
   Link as MuiLink,
+  Alert,
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
 
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/userSlice";
+import { useState } from "react";
 
 const validationSchema = yup.object({
-  username: yup.string().required("Username is required"),
+  // username: yup.string().required("Username is required"), // TODO: Uncomment this line when username feature is added
   email: yup
     .string()
     .email("Enter a valid email")
@@ -23,9 +26,25 @@ const validationSchema = yup.object({
   password: yup.string().required("Password is required"),
 });
 
+const signUpUser = async (values, dispatch, navigate, setError) => {
+  try {
+    const response = await axios.post("https://cmsservice-9e12a2790a1c.herokuapp.com/users/register", values);
+    const userData = response.data;
+    localStorage.setItem("user", JSON.stringify(userData));
+    console.log("🚀 ~ signUpUser ~ axios response :", response)
+    localStorage.setItem("isLoggedIn", "true");
+    dispatch(setUser(userData));
+    navigate("/");
+  } catch (error) {
+    setError("Error during sign up");
+    console.error("Error during sign up:", error);
+  }
+};
+
 const SignUp = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
@@ -36,20 +55,14 @@ const SignUp = () => {
 
   const formik = useFormik({
     initialValues: {
-      username: "",
+      // username: "", // TODO: Uncomment this line when username feature is added
       email: "",
       password: "",
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      // Store user data in localStorage
-      localStorage.setItem("user", JSON.stringify(values));
-      // Store login status in localStorage
-      localStorage.setItem("isLoggedIn", "true");
-      // Dispatch action to save user info to the store
-      dispatch(setUser(values));
-      // Redirect to the home page
-      navigate("/");
+      setError("");
+      signUpUser(values, dispatch, navigate, setError);
     },
   });
 
@@ -67,7 +80,8 @@ const SignUp = () => {
           Sign Up
         </Typography>
         <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>
-          <TextField
+        {/* // TODO: Uncomment this line when username feature is added */}
+          {/* <TextField
             margin="normal"
             required
             fullWidth
@@ -81,7 +95,7 @@ const SignUp = () => {
             onBlur={formik.handleBlur}
             error={formik.touched.username && Boolean(formik.errors.username)}
             helperText={formik.touched.username && formik.errors.username}
-          />
+          /> */}
           <TextField
             margin="normal"
             required
@@ -124,6 +138,7 @@ const SignUp = () => {
           </MuiLink>
         </Box>
       </Box>
+        {error && <Alert sx={{my: 2}} severity="error">{error}</Alert>}
     </Container>
   );
 };
