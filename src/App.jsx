@@ -89,7 +89,8 @@ const MainContent = () => {
   const dispatch = useDispatch();
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
 
-  const [username, setUsername] = useState("");
+  // const [username, setUsername] = useState(""); TODO: re-enable this line when username feature is added
+  const [email, setEmail] = useState("");
   const isSignUpOrLoginPage =
     location.pathname === "/sign-up" || location.pathname === "/login";
 
@@ -97,7 +98,7 @@ const MainContent = () => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     if (storedUser && isLoggedIn) {
-      setUsername(storedUser.username);
+      setEmail(storedUser.email);
       dispatch(setUser(storedUser));
     } else {
       dispatch(clearUser());
@@ -173,8 +174,8 @@ const MainContent = () => {
               </Typography>
               <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <Avatar sx={{ width: 30, height: 30, mr: 1 }}>{getFirstLetter(username)}</Avatar>
-                  <Typography variant="body1">{username}</Typography>
+                  <Avatar sx={{ width: 30, height: 30, mr: 1 }}>{getFirstLetter(email)}</Avatar>
+                  <Typography variant="body1">{email}</Typography>
                 </Box>
                 <IconButton style={{ outline: "none" }} color="inherit">
                   <SettingsIcon />
