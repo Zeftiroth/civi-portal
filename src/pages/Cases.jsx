@@ -31,7 +31,7 @@ const Cases = () => {
     // contactName: "",
     caseTitle: "",
     caseDescription: "",
-    // status: "",
+    caseStatus: "OPEN",
     priorityLevel: "",
     caseCategory: "",
     riskLevel: "",
