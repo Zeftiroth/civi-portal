@@ -13,6 +13,7 @@ import * as yup from "yup";
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/userSlice";
+import axios from "axios";
 
 const validationSchema = yup.object({
   username: yup.string().required("Username is required"),
