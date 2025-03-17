@@ -17,3 +17,13 @@ body {
 main {
   margin-left: 0px !important;
 }
+
+div.MuiFormControl-root label.MuiFormLabel-root {
+  background-color: white;
+}
+
+tbody.cases-table-body {
+  tr {
+    cursor: pointer;
+  }
+}

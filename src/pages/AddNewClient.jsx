@@ -139,8 +139,8 @@ const AddNewClient = () => {
         </Paper>
       </Box>
 
-      {/* Right Section */}
-      <Box sx={{ flex: 1, maxWidth: "250px" }}>
+     
+      {/* <Box sx={{ flex: 1, maxWidth: "250px" }}>
         <Accordion elevation={3} sx={{ borderRadius: 0 }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="body1" sx={{ fontWeight: "bold" }}>
@@ -148,9 +148,6 @@ const AddNewClient = () => {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            {/* <Typography variant="body2">
-              Fill out the form to add a new client.
-            </Typography> */}
           </AccordionDetails>
         </Accordion>
 
@@ -165,11 +162,6 @@ const AddNewClient = () => {
               </Typography>
             </Link>
           </AccordionSummary>
-          {/* <AccordionDetails>
-            <Typography variant="body2">
-              Add family member details to the client profile.
-            </Typography>
-          </AccordionDetails> */}
         </Accordion>
 
         <Accordion elevation={3} sx={{ borderRadius: 0 }}>
@@ -184,7 +176,7 @@ const AddNewClient = () => {
             </Typography>
           </AccordionDetails>
         </Accordion>
-      </Box>
+      </Box> */}
     </Box>
   );
 };

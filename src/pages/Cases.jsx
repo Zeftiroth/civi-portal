@@ -8,27 +8,20 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
   CircularProgress,
   Backdrop,
 } from "@mui/material";
 import axios from "axios";
+import CreateCaseModal from "../components/CreateCaseModal";
+import CaseDetailsModal from "../components/CaseDetailsModal";
 
 const Cases = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [open, setOpen] = useState(false);
+  const [openCreate, setOpenCreate] = useState(false);
+  const [openDetails, setOpenDetails] = useState(false);
   const [loading, setLoading] = useState(false);
   const [cases, setCases] = useState([]);
   const [newCase, setNewCase] = useState({
-    // contactName: "",
     caseTitle: "",
     caseDescription: "",
     caseStatus: "OPEN",
@@ -37,8 +30,8 @@ const Cases = () => {
     riskLevel: "",
     legalInvolvement: "",
     referralSource: "",
-    // attachment: null,
   });
+  const [selectedCase, setSelectedCase] = useState(null);
   const [attachmentName, setAttachmentName] = useState("");
 
   useEffect(() => {
@@ -60,12 +53,22 @@ const Cases = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handleOpen = () => {
-    setOpen(true);
+  const handleOpenCreate = () => {
+    setOpenCreate(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseCreate = () => {
+    setOpenCreate(false);
+  };
+
+  const handleOpenDetails = (caseItem) => {
+    setSelectedCase(caseItem);
+    setOpenDetails(true);
+  };
+
+  const handleCloseDetails = () => {
+    setOpenDetails(false);
+    setSelectedCase(null);
   };
 
   const handleInputChange = (e) => {
@@ -74,45 +77,51 @@ const Cases = () => {
       ...prevState,
       [name]: value,
     }));
+    setSelectedCase((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setNewCase((prevState) => ({
+    setSelectedCase((prevState) => ({
       ...prevState,
       attachment: file,
     }));
-    // setAttachmentName(file.name);
+    setAttachmentName(file.name);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmitCreate = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        "https://cmsservice-9e12a2790a1c.herokuapp.com/api/cases/create",
+        newCase,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      fetchCases(); // Refresh the cases list
+      return response; // Return the API response
+    } catch (error) {
+      console.error("Error creating case:", error);
+      throw error; // Re-throw the error to be handled in the modal
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmitDetails = async () => {
     setLoading(true);
 
-    const caseData = { ...newCase };
-    // if (caseData.attachment) {
-    //   const formData = new FormData();
-    //   formData.append("file", caseData.attachment);
-    //   try {
-    //     const uploadResponse = await axios.post(
-    //       "https://cmsservice-9e12a2790a1c.herokuapp.com/api/upload",
-    //       formData,
-    //       {
-    //         headers: {
-    //           "Content-Type": "multipart/form-data",
-    //         },
-    //       }
-    //     );
-    //     caseData.attachment = uploadResponse.data.fileUrl;
-    //   } catch (error) {
-    //     console.error("Error uploading file:", error);
-    //     setLoading(false);
-    //     return;
-    //   }
-    // }
+    const caseData = { ...selectedCase };
 
     try {
-      await axios.post(
-        "https://cmsservice-9e12a2790a1c.herokuapp.com/api/cases/create",
+      await axios.put(
+        `https://cmsservice-9e12a2790a1c.herokuapp.com/api/cases/${caseData.caseId}`,
         caseData,
         {
           headers: {
@@ -121,17 +130,22 @@ const Cases = () => {
         }
       );
       fetchCases();
-      handleClose();
+      handleCloseDetails();
     } catch (error) {
-      console.error("Error creating case:", error);
+      console.error("Error updating case:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // const filteredData = mockData.filter((caseItem) =>
-  //   caseItem.caseName.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
+  const tableColumns = [
+    { title: "Case Id", field: "caseId", width: "10%" },
+    { title: "Case Title", field: "caseTitle", width: "30%" },
+    { title: "Status", field: "caseStatus", width: "15%" },
+    { title: "Priority", field: "priorityLevel", width: "15%" },
+    { title: "Category", field: "caseCategory", width: "15%" },
+    { title: "Risk", field: "riskLevel", width: "15%" },
+  ];
 
   return (
     <Box>
@@ -145,7 +159,7 @@ const Cases = () => {
           p: 2,
         }}
       >
-        <Button variant="contained" color="primary" onClick={handleOpen}>
+        <Button variant="contained" color="primary" onClick={handleOpenCreate}>
           New Case
         </Button>
         <TextField
@@ -161,150 +175,62 @@ const Cases = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Case Number</TableCell>
-              <TableCell>Contact Name</TableCell>
-              <TableCell>Created At</TableCell>
-              <TableCell>Case Name</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Priority</TableCell>
-              <TableCell>Case Category</TableCell>
-              <TableCell>Risk Level</TableCell>
-              <TableCell>Legal Involvement</TableCell>
-              <TableCell>Referral Source</TableCell>
-              <TableCell>Attachment</TableCell>
+              {tableColumns.map((column) => (
+                <TableCell key={column.field} sx={{ width: column.width }}>
+                  {column.title}
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody className="cases-table-body">
             {cases.map((caseItem) => (
-              <TableRow key={caseItem.caseNumber}>
-                <TableCell>{caseItem.caseNumber}</TableCell>
-                <TableCell>{caseItem.contactName}</TableCell>
-                <TableCell>{caseItem.createdAt}</TableCell>
-                <TableCell>{caseItem.caseName}</TableCell>
-                <TableCell>{caseItem.status}</TableCell>
-                <TableCell>{caseItem.priority}</TableCell>
-                <TableCell>{caseItem.caseCategory}</TableCell>
-                <TableCell>{caseItem.riskLevel}</TableCell>
-                <TableCell>{caseItem.legalInvolvement}</TableCell>
-                <TableCell>{caseItem.referralSource}</TableCell>
-                <TableCell>
-                  {caseItem.attachment ? (
-                    <a
-                      href={caseItem.attachment}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View
-                    </a>
-                  ) : (
-                    "No Attachment"
-                  )}
-                </TableCell>
+              <TableRow key={caseItem.caseNumber} onClick={() => handleOpenDetails(caseItem)}>
+                {tableColumns.map((column) => (
+                  <TableCell key={column.field} sx={{ width: column.width }}>
+                    {column.field === "attachment" ? (
+                      caseItem[column.field] ? (
+                        <a
+                          href={caseItem[column.field]}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          View
+                        </a>
+                      ) : (
+                        "No Attachment"
+                      )
+                    ) : (
+                      caseItem[column.field]
+                    )}
+                  </TableCell>
+                ))}
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </Box>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Create New Case</DialogTitle>
-        <DialogContent>
-          {/* <TextField
-            margin="dense"
-            label="Contact Name"
-            name="contactName"
-            value={newCase.contactName}
-            onChange={handleInputChange}
-            fullWidth
-          /> */}
-          <TextField
-            margin="dense"
-            label="Case Title"
-            name="caseTitle"
-            value={newCase.caseTitle}
-            onChange={handleInputChange}
-            fullWidth
-          />
-          <TextField
-            margin="dense"
-            label="Case Description"
-            name="caseDescription"
-            value={newCase.caseDescription}
-            onChange={handleInputChange}
-            fullWidth
-          />
-
-          <FormControl fullWidth margin="dense">
-            <InputLabel>Priority</InputLabel>
-            <Select
-              name="priorityLevel"
-              value={newCase.priorityLevel}
-              onChange={handleInputChange}
-            >
-              <MenuItem value="High">High</MenuItem>
-              <MenuItem value="Medium">Medium</MenuItem>
-              <MenuItem value="Low">Low</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl fullWidth margin="dense">
-            <InputLabel>Case Category</InputLabel>
-            <Select
-              name="caseCategory"
-              value={newCase.caseCategory}
-              onChange={handleInputChange}
-            >
-              <MenuItem value="Category 1">Category 1</MenuItem>
-              <MenuItem value="Category 2">Category 2</MenuItem>
-              <MenuItem value="Category 3">Category 3</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl fullWidth margin="dense">
-            <InputLabel>Risk Level</InputLabel>
-            <Select
-              name="riskLevel"
-              value={newCase.riskLevel}
-              onChange={handleInputChange}
-            >
-              <MenuItem value="High">High</MenuItem>
-              <MenuItem value="Medium">Medium</MenuItem>
-              <MenuItem value="Low">Low</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField
-            margin="dense"
-            label="Legal Involvement"
-            name="legalInvolvement"
-            value={newCase.legalInvolvement}
-            onChange={handleInputChange}
-            fullWidth
-          />
-          <TextField
-            margin="dense"
-            label="Referral Source"
-            name="referralSource"
-            value={newCase.referralSource}
-            onChange={handleInputChange}
-            fullWidth
-          />
-          {/* <Button variant="contained" component="label" sx={{ mt: 2 }}>
-            Upload Attachment
-            <input type="file" hidden onChange={handleFileChange} />
-          </Button>
-          {attachmentName && (
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              Attached file: {attachmentName}
-            </Typography>
-          )} */}
-        </DialogContent>
-        <DialogActions>
-          <Button variant="contained" onClick={handleClose} color="secondary">
-            Cancel
-          </Button>
-          <Button variant="contained" onClick={handleSubmit} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+      <CreateCaseModal
+        open={openCreate}
+        handleClose={handleCloseCreate}
+        newCase={newCase}
+        handleInputChange={handleInputChange}
+        handleSubmit={handleSubmitCreate}
+      />
+      {selectedCase && (
+        <CaseDetailsModal
+          open={openDetails}
+          handleClose={handleCloseDetails}
+          caseDetails={selectedCase}
+          handleInputChange={handleInputChange}
+          handleFileChange={handleFileChange}
+          handleSubmit={handleSubmitDetails}
+          attachmentName={attachmentName}
+        />
+      )}
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
         <CircularProgress color="inherit" />
       </Backdrop>
     </Box>

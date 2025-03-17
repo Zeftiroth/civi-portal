@@ -78,7 +78,7 @@ const ClientsSearchPage = () => {
       <Link to="/add-client">
         <Button
           variant="contained"
-          color="success"
+          color="primary"
           sx={{ mb: 2, textTransform: "none", fontWeight: "bold" }}
         >
           + Add New Client
@@ -86,62 +86,10 @@ const ClientsSearchPage = () => {
       </Link>
 
       <Box sx={{ display: "flex", gap: 2 }}>
-        {/* Filters Section */}
-        <Paper elevation={3} sx={{ p: 2, width: "25%" }}>
-          <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
-            Keywords
-          </Typography>
-
-          {/* Age Filter */}
-          <Box sx={{ mb: 3 }}>
-            <FormLabel component="legend" sx={{ mb: 1, fontWeight: "bold" }}>
-              Age
-            </FormLabel>
-            <Slider
-              value={filters.age}
-              onChange={handleAgeChange}
-              valueLabelDisplay="auto"
-              min={0}
-              max={100}
-            />
-            <Typography variant="body2">{`${filters.age[0]}-${filters.age[1]}`}</Typography>
-          </Box>
-
-          {/* First Name Filter */}
-          <Box>
-            <FormLabel component="legend" sx={{ mb: 1, fontWeight: "bold" }}>
-              First Name
-            </FormLabel>
-            <List dense>
-              {["A", "B", "..."].map((name) => (
-                <ListItem key={name} disablePadding>
-                  <Checkbox
-                    checked={filters.firstName.includes(name)}
-                    onChange={() => handleFirstNameToggle(name)}
-                  />
-                  <ListItemText primary={name} />
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        </Paper>
 
         {/* Table Section */}
         <Box sx={{ flex: 1 }}>
-          {/* Search Bar */}
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <TextField
-              placeholder="Search"
-              value={search}
-              onChange={handleSearchChange}
-              variant="outlined"
-              fullWidth
-              size="small"
-            />
-            <Button variant="outlined" sx={{ ml: 2 }}>
-              {selectedCategory}
-            </Button>
-          </Box>
+         
 
           {/* Table */}
           <TableContainer component={Paper}>

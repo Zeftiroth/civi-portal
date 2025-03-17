@@ -1,14 +1,33 @@
-import React from "react";
-import { Box, Typography, Paper, Grid2 } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Paper } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined";
+import axios from "axios";
 
 const DashSummary = () => {
+  const [cases, setCases] = useState(0);
+
+  useEffect(() => {
+    fetchCases();
+  }, []);
+
+  const fetchCases = async () => {
+    try {
+      const response = await axios.get(
+        "https://cmsservice-9e12a2790a1c.herokuapp.com/api/cases"
+      );
+      setCases(response.data.length);
+    } catch (error) {
+      console.error("Error fetching cases:", error);
+    }
+  };
+
   const stats = [
     {
       label: "Cases",
-      value: 1,
+      value: cases,
       description: "Total Cases",
       icon: <AssignmentOutlinedIcon fontSize="large" />,
     },
@@ -31,9 +50,9 @@ const DashSummary = () => {
       <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
         Dashboard
       </Typography>
-      <Grid2 container spacing={2}>
+      <Grid container spacing={2}>
         {stats.map((stat, index) => (
-          <Grid2 item xs={12} sm={4} key={index}>
+          <Grid item xs={12} sm={4} key={index}>
             <Paper
               elevation={3}
               sx={{
@@ -63,9 +82,9 @@ const DashSummary = () => {
               </Box>
               {stat.icon}
             </Paper>
-          </Grid2>
+          </Grid>
         ))}
-      </Grid2>
+      </Grid>
     </Box>
   );
 };
