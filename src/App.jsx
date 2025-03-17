@@ -45,18 +45,21 @@ import {
   Contacts as ContactsIcon,
   Logout as LogoutIcon,
   Folder as FolderIcon,
+  CalendarMonth as CalendarMonthIcon ,
 } from "@mui/icons-material";
 import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, clearUser } from "./store/userSlice";
+import Appointments from "./pages/Appointments";
+import CaseWorkers from "./pages/CaseWorkers";
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#1976d2", // Customize primary color
+      main: "#5a6270", // Customize primary color
     },
     secondary: {
-      main: "#9c27b0", // Customize secondary color
+      main: "#eb2310", // Customize secondary color
     },
   },
   typography: {
@@ -72,6 +75,8 @@ const pathMap = {
   "/add-family-member": "Add Family Member",
   "/contacts-personal-info": "Contacts",
   "/cases": "Cases",
+  "/case-workers": "Case Workers",
+  "/appointments": "Appointments",
   // Add more mappings as needed
 };
 
@@ -117,15 +122,25 @@ const MainContent = () => {
   const navItems = [
     { label: "Home", icon: <HomeIcon />, path: "/" },
     { label: "Clients", icon: <PersonIcon />, path: "/clients-search" },
-    {
-      label: "Contacts",
-      icon: <ContactsIcon />,
-      path: "/contacts-personal-info",
-    },
+    // {
+    //   label: "Contacts",
+    //   icon: <ContactsIcon />,
+    //   path: "/contacts-personal-info",
+    // },
     {
       label: "Cases",
       icon: <FolderIcon />,
       path: "cases",
+    },
+    {
+      label: "Case Workers",
+      icon: <ContactsIcon />,
+      path: "case-workers",
+    },
+    {
+      label: "Appointments",
+      icon: <CalendarMonthIcon />,
+      path: "appointments",
     },
   ];
 
@@ -343,6 +358,14 @@ const MainContent = () => {
               }
             />
             <Route
+              path="/case-workers"
+              element={
+                <PrivateRoute>
+                  <CaseWorkers />
+                </PrivateRoute>
+              }
+            />
+            <Route
               path="/case-details"
               element={
                 <PrivateRoute>
@@ -355,6 +378,14 @@ const MainContent = () => {
               element={
                 <PrivateRoute>
                   <ProgramEngagements />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/appointments"
+              element={
+                <PrivateRoute>
+                  <Appointments />
                 </PrivateRoute>
               }
             />

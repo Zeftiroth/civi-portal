@@ -16,7 +16,7 @@ import { setUser } from "../store/userSlice";
 import axios from "axios";
 
 const validationSchema = yup.object({
-  username: yup.string().required("Username is required"),
+  email: yup.string().required("email is required"),
   password: yup.string().required("Password is required"),
 });
 
@@ -48,7 +48,7 @@ const Login = () => {
 
   const formik = useFormik({
     initialValues: {
-      username: "",
+      email: "",
       password: "",
     },
     validationSchema: validationSchema,
@@ -76,16 +76,16 @@ const Login = () => {
             margin="normal"
             required
             fullWidth
-            id="username"
-            label="Username"
-            name="username"
-            autoComplete="username"
+            id="email"
+            label="email"
+            name="email"
+            autoComplete="email"
             autoFocus
-            value={formik.values.username}
+            value={formik.values.email}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.touched.username && Boolean(formik.errors.username)}
-            helperText={formik.touched.username && formik.errors.username}
+            error={formik.touched.email && Boolean(formik.errors.email)}
+            helperText={formik.touched.email && formik.errors.email}
           />
           <TextField
             margin="normal"
