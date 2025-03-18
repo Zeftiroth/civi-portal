@@ -121,7 +121,7 @@ const MainContent = () => {
 
   const navItems = [
     { label: "Home", icon: <HomeIcon />, path: "/" },
-    { label: "Clients", icon: <PersonIcon />, path: "/clients-search" },
+    // { label: "Clients", icon: <PersonIcon />, path: "/clients-search" },
     // {
     //   label: "Contacts",
     //   icon: <ContactsIcon />,
@@ -185,16 +185,16 @@ const MainContent = () => {
                   flexGrow: 1,
                 }}
               >
-                Dashboard
+                CIVI
               </Typography>
               <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <Avatar sx={{ width: 30, height: 30, mr: 1 }}>{getFirstLetter(email)}</Avatar>
                   <Typography variant="body1">{email}</Typography>
                 </Box>
-                <IconButton style={{ outline: "none" }} color="inherit">
+                {/* <IconButton style={{ outline: "none" }} color="inherit">
                   <SettingsIcon />
-                </IconButton>
+                </IconButton> */}
                 <IconButton
                   style={{ outline: "none" }}
                   color="inherit"

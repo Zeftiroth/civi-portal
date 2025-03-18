@@ -110,9 +110,20 @@ const CaseWorkers = () => {
   const handleSubmitDetails = async () => {
     setLoading(true);
     try {
+        const payload = {
+            caseWorkerId: selectedCaseWorker.caseWorkerId, // Include the ID in the payload
+            firstName: selectedCaseWorker.firstName,
+            lastName: selectedCaseWorker.lastName,
+            email: selectedCaseWorker.email,
+            phoneNumber: selectedCaseWorker.phoneNumber,
+            jobTitle: selectedCaseWorker.jobTitle,
+            departmentName: selectedCaseWorker.departmentName,
+            homeAddress: selectedCaseWorker.homeAddress,
+            officeAddress: selectedCaseWorker.officeAddress,
+        };
       await axios.put(
-        `https://cmsservice-9e12a2790a1c.herokuapp.com/update-caseworker/${selectedCaseWorker.caseWorkerId}`,
-        selectedCaseWorker,
+        `https://cmsservice-9e12a2790a1c.herokuapp.com/update-caseworker`,
+        payload,
         {
           headers: {
             "Content-Type": "application/json",
@@ -208,7 +219,7 @@ const CaseWorkers = () => {
           handleClose={handleCloseDetails}
           caseWorkerDetails={selectedCaseWorker}
           handleInputChange={handleInputChange}
-          handleSubmit={handleSubmitDetails}
+          fetchCaseWorkers={fetchCaseWorkers}
         />
       )}
       <Backdrop

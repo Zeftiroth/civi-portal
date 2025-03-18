@@ -51,7 +51,7 @@ const AppointmentDetailsModal = ({
       };
 
       await axios.put(
-        `https://cmsservice-9e12a2790a1c.herokuapp.com/api/appointments/update/${appointmentDetails.appointmentId}`,
+        `https://cmsservice-9e12a2790a1c.herokuapp.com/api/appointments/update`,
         payload,
         {
           headers: {
@@ -67,6 +67,29 @@ const AppointmentDetailsModal = ({
     } finally {
       setLoading(false);
       setIsEditable(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to permanently delete this appointment? This action cannot be undone."
+    );
+
+    if (!confirmDelete) return;
+
+    setLoading(true);
+    try {
+      await axios.delete(
+        `https://cmsservice-9e12a2790a1c.herokuapp.com/api/appointments/${appointmentDetails.appointmentId}`
+      );
+
+      fetchAppointments(); // Refresh the appointments list
+      handleClose(); // Close the modal
+    } catch (error) {
+      console.error("Error deleting appointment:", error);
+      alert("Failed to delete the appointment. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -168,9 +191,19 @@ const AppointmentDetailsModal = ({
             </Button>
           </>
         ) : (
-          <Button variant="contained" onClick={toggleEdit} color="primary">
-            Edit
-          </Button>
+          <>
+            <Button variant="contained" onClick={toggleEdit} color="primary">
+              Edit
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleDelete}
+              color="secondary"
+              disabled={loading}
+            >
+              Delete
+            </Button>
+          </>
         )}
       </DialogActions>
     </Dialog>
