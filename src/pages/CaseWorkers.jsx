@@ -163,14 +163,14 @@ const CaseWorkers = () => {
         <Button variant="contained" color="primary" onClick={handleOpenCreate}>
           New Case Worker
         </Button>
-        <TextField
+        {/* <TextField
           label="Search Case Workers"
           variant="outlined"
           size="small"
           value={searchTerm}
           onChange={handleSearchChange}
           sx={{ mr: 2 }}
-        />
+        /> */}
       </Box>
       <Box id="caseworkers-table" sx={{ p: 2 }}>
         <Table>

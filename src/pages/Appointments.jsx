@@ -123,14 +123,14 @@ const Appointments = () => {
         <Button variant="contained" color="primary" onClick={handleOpenCreate}>
           New Appointment
         </Button>
-        <TextField
+        {/* <TextField
           label="Search Appointments"
           variant="outlined"
           size="small"
           value={searchTerm}
           onChange={handleSearchChange}
           sx={{ mr: 2 }}
-        />
+        /> */}
       </Box>
       <Box id="appointments-table" sx={{ p: 2 }}>
         <Table>

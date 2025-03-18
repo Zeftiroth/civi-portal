@@ -14,6 +14,9 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useSelector } from "react-redux"; // Assuming you're using Redux
+import { DatePicker } from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 const CreateAppointmentModal = ({
   open,
@@ -23,6 +26,7 @@ const CreateAppointmentModal = ({
   fetchAppointments, // Function to refresh the appointments list after creation
 }) => {
   const [loading, setLoading] = useState(false);
+  const [localDate, setLocalDate] = useState(null); // Local state for the date picker
 
   // Get the user's email from the Redux store
   const userEmail = useSelector((state) => state.user.email); // Adjust this based on your store structure
@@ -38,7 +42,7 @@ const CreateAppointmentModal = ({
     try {
       const payload = {
         appointmentId: 0, // Default value for new appointments
-        appointmentDateTime: `${newAppointment.date}T${newAppointment.time}`, // Combine date and time
+        appointmentDateTime: `${localDate.toISOString().split("T")[0]}T${newAppointment.time}`, // Combine date and time
         status: newAppointment.status,
         location: newAppointment.location,
         notes: newAppointment.notes,
@@ -68,16 +72,18 @@ const CreateAppointmentModal = ({
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle>Create New Appointment</DialogTitle>
       <DialogContent>
-        <TextField
-          margin="dense"
-          label="Date"
-          name="date"
-          type="date"
-          value={newAppointment.date}
-          onChange={handleInputChange}
-          fullWidth
-          InputLabelProps={{ shrink: true }}
-        />
+        <div style={{ marginTop: "1em", marginBottom: "3px" }}>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="Date"
+              value={localDate}
+              onChange={(newValue) => setLocalDate(newValue)}
+              renderInput={(params) => (
+                <TextField {...params} margin="dense" fullWidth />
+              )}
+            />
+          </LocalizationProvider>
+        </div>
         <TextField
           margin="dense"
           label="Time"
@@ -128,12 +134,23 @@ const CreateAppointmentModal = ({
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" onClick={handleClose} color="secondary" disabled={loading}>
-          Cancel
-        </Button>
-        <Button variant="contained" onClick={handleSubmit} color="primary" disabled={loading}>
+      <Button
+          variant="contained"
+          onClick={handleSubmit}
+          color="primary"
+          disabled={loading}
+        >
           {loading ? <CircularProgress size={24} /> : "Save"}
         </Button>
+        <Button
+          variant="contained"
+          onClick={handleClose}
+          color="secondary"
+          disabled={loading}
+        >
+          Cancel
+        </Button>
+        
       </DialogActions>
     </Dialog>
   );

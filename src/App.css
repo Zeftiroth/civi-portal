@@ -27,3 +27,32 @@ tbody.cases-table-body {
     cursor: pointer;
   }
 }
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+table th {
+  background-color: #f2f2f2; /* Slightly darker background for headers */
+  font-weight: bold;
+  text-align: left;
+}
+
+table tr:hover {
+  background-color: #f9f9f9; /* Optional: Highlight row on hover */
+}
+
+h2.MuiDialogTitle-root {
+  border: 1px solid #ddd;
+}
+
+div.MuiDialogActions-root {
+  padding-right: 1.5em;
+  padding-left: 1.5em;
+}

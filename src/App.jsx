@@ -56,10 +56,10 @@ import CaseWorkers from "./pages/CaseWorkers";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#5a6270", // Customize primary color
+      main: "#C1E1C1", // Customize primary color
     },
     secondary: {
-      main: "#eb2310", // Customize secondary color
+      main: "#ffffb7 ", // Customize secondary color
     },
   },
   typography: {
@@ -164,7 +164,7 @@ const MainContent = () => {
             className="no-box-shadow"
           >
             <Toolbar>
-              <ListItemIcon
+              {/* <ListItemIcon
                 sx={{
                   marginLeft: isDrawerOpen ? `${drawerWidth}px` : "62px",
                 }}
@@ -176,13 +176,14 @@ const MainContent = () => {
                 >
                   <MenuIcon />
                 </IconButton>
-              </ListItemIcon>
+              </ListItemIcon> */}
               <Typography
                 variant="h6"
                 noWrap
                 component="div"
                 sx={{
                   flexGrow: 1,
+                  marginLeft: isDrawerOpen ? `calc(${drawerWidth}px - 17px)` : "55px",
                 }}
               >
                 CIVI
@@ -223,10 +224,11 @@ const MainContent = () => {
             className="no-box-shadow"
           >
             <div>
-              <Link to="/" style={{ textDecoration: "none", color: "black" }}>
+              {/* <Link to="/" style={{ textDecoration: "none", color: "black" }}>
                 CIVI
               </Link>{" "}
-              / {getPathName(location.pathname)}
+              /  */}
+              {getPathName(location.pathname)}
             </div>
           </AppBar>
           <Drawer
@@ -243,12 +245,25 @@ const MainContent = () => {
             }}
           >
             <Toolbar />
+            <ListItemIcon
+                sx={{
+                  marginLeft:"9px",
+                }}
+              >
+                <IconButton
+                  style={{ outline: "none" }}
+                  color="inherit"
+                  onClick={toggleDrawer}
+                >
+                  <MenuIcon />
+                </IconButton>
+              </ListItemIcon>
             <Box sx={{ flexGrow: 1, overflow: "hidden" }}>
               <List>
                 {navItems.map((item, index) => (
                   <ListItem button component={Link} to={item.path} key={index}>
                     <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText primary={item.label} />
+                    <ListItemText sx={{color: 'black'}} primary={item.label} />
                   </ListItem>
                 ))}
               </List>

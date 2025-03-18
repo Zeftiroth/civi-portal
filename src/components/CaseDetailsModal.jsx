@@ -26,9 +26,7 @@ const CaseDetailsModal = ({
   handleInputChange,
   handleFileChange,
   handleSubmit,
-  attachmentName,
-  isAttached,
-  setIsAttached,
+  attachmentName
 }) => {
   const [isEditable, setIsEditable] = useState(false);
   const [caseworkers, setCaseworkers] = useState([]); // List of caseworkers for the dropdown
@@ -63,13 +61,9 @@ const CaseDetailsModal = ({
     }
   };
 
-  const handleAttachFile = () => {
-    handleFileChange();
-  };
 
   const handleAssignWorker = async () => {
     if (!selectedWorkerId) {
-      alert("Please select a caseworker to assign.");
       return;
     }
 

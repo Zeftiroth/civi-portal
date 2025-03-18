@@ -67,6 +67,7 @@ const DashSummary = () => {
                 <Typography
                   variant="h4"
                   sx={{ fontWeight: "bold", color: "black" }}
+                  onClick={() => console.log("clicked")}
                 >
                   {stat.value}
                 </Typography>

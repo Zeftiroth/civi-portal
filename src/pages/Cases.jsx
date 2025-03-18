@@ -122,6 +122,7 @@ const Cases = () => {
     const caseData = { ...selectedCase };
 
     try {
+      // Update the case details
       await axios.put(
         `https://cmsservice-9e12a2790a1c.herokuapp.com/api/cases/update`,
         caseData,
@@ -131,10 +132,28 @@ const Cases = () => {
           },
         }
       );
+
+      // Check if a file is attached and upload it
+      if (selectedCase.attachment) {
+        const formData = new FormData();
+        formData.append("file", selectedCase.attachment);
+
+        await axios.post(
+          `https://cmsservice-9e12a2790a1c.herokuapp.com/api/case/uploadfile/${selectedCase.caseId}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      }
+
+      // Refresh the cases list and close the details modal
       fetchCases();
       handleCloseDetails();
     } catch (error) {
-      console.error("Error updating case:", error);
+      console.error("Error updating case or uploading file:", error);
     } finally {
       setLoading(false);
     }
@@ -164,14 +183,14 @@ const Cases = () => {
         <Button variant="contained" color="primary" onClick={handleOpenCreate}>
           New Case
         </Button>
-        <TextField
+        {/* <TextField
           label="Search Cases"
           variant="outlined"
           size="small"
           value={searchTerm}
           onChange={handleSearchChange}
           sx={{ mr: 2 }}
-        />
+        /> */}
       </Box>
       <Box id="cases-table" sx={{ p: 2 }}>
         <Table>
