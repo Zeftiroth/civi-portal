@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -10,8 +10,14 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Box,
   Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
 } from "@mui/material";
+import axios from "axios";
 
 const CaseDetailsModal = ({
   open,
@@ -21,16 +27,66 @@ const CaseDetailsModal = ({
   handleFileChange,
   handleSubmit,
   attachmentName,
+  isAttached,
+  setIsAttached,
 }) => {
   const [isEditable, setIsEditable] = useState(false);
+  const [caseworkers, setCaseworkers] = useState([]); // List of caseworkers for the dropdown
+  const [selectedWorkerId, setSelectedWorkerId] = useState(""); // Selected caseworker ID for assignment
+  const [assigningWorker, setAssigningWorker] = useState(false); // Toggle for Assign Caseworker dropdown
+  const [loading, setLoading] = useState(false);
 
   const toggleEdit = () => {
     setIsEditable(!isEditable);
   };
 
-  const handleSave = () => {
-    handleSubmit();
+  const handleSave =  () => {
+     handleSubmit();
+     handleAssignWorker()
     setIsEditable(false);
+  };
+
+  useEffect(() => {
+    if (open) {
+      fetchCaseworkers(); // Fetch caseworkers when the modal is opened
+    }
+  }, [open]);
+
+  const fetchCaseworkers = async () => {
+    try {
+      const response = await axios.get(
+        "https://cmsservice-9e12a2790a1c.herokuapp.com/get-caseworkers"
+      );
+      setCaseworkers(response.data);
+    } catch (error) {
+      console.error("Error fetching caseworkers:", error);
+    }
+  };
+
+  const handleAttachFile = () => {
+    handleFileChange();
+  };
+
+  const handleAssignWorker = async () => {
+    if (!selectedWorkerId) {
+      alert("Please select a caseworker to assign.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.post(
+        `https://cmsservice-9e12a2790a1c.herokuapp.com/assign-caseworker/caseid/${caseDetails.caseId}/worker/${selectedWorkerId}`
+      );
+
+      alert("Caseworker successfully assigned to the case.");
+      setAssigningWorker(false); // Close the dropdown
+    } catch (error) {
+      console.error("Error assigning caseworker:", error);
+      alert("Failed to assign the caseworker. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -111,15 +167,72 @@ const CaseDetailsModal = ({
           fullWidth
           disabled={!isEditable}
         />
+        <Box sx={{ mt: 3 }}>
+          <Typography variant="h6">Assigned Caseworkers</Typography>
+          <Button
+            variant="contained"
+            onClick={() => setAssigningWorker(!assigningWorker)}
+            color="primary"
+            sx={{ mr: 1 }}
+            disabled={!isEditable}
+          >
+            {assigningWorker ? "Cancel" : "Assign Caseworker"}
+          </Button>
+          {/* {assigningWorker && (
+            <Button
+              variant="contained"
+              onClick={handleAssignWorker}
+              color="primary"
+              sx={{ mr: 1 }}
+            >
+              Confirm Assignment
+            </Button>
+          )} */}
+          <List>
+            {caseDetails.assignedCaseWorkers?.map((worker) => (
+              <React.Fragment key={worker.caseWorkerId}>
+                <ListItem>
+                  <ListItemText
+                    primary={`Name: ${worker.firstName} ${worker.lastName}`}
+                    secondary={`Email: ${worker.email} | Phone: ${worker.phoneNumber}`}
+                  />
+                </ListItem>
+                <Divider />
+              </React.Fragment>
+            ))}
+          </List>
+          {assigningWorker && (
+            <Box sx={{ mt: 2 }}>
+              <FormControl fullWidth margin="dense">
+                <InputLabel>Select Caseworker </InputLabel>
+
+                <Select
+                  value={selectedWorkerId}
+                  onChange={(e) => setSelectedWorkerId(e.target.value)}
+                >
+                  {caseworkers.map((worker) => (
+                    <MenuItem
+                      key={worker.caseWorkerId}
+                      value={worker.caseWorkerId}
+                    >
+                      {worker.firstName} {worker.lastName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          )}
+        </Box>
         <Button
           variant="contained"
           component="label"
           sx={{ mt: 2 }}
           disabled={!isEditable}
         >
-          Upload Attachment
+          Attach File
           <input type="file" hidden onChange={handleFileChange} />
         </Button>
+
         {attachmentName && (
           <Typography variant="body2" sx={{ mt: 1 }}>
             Attached file: {attachmentName}

@@ -33,6 +33,7 @@ const Cases = () => {
   });
   const [selectedCase, setSelectedCase] = useState(null);
   const [attachmentName, setAttachmentName] = useState("");
+  const [isAttached, setIsAttached] = useState(false);
 
   useEffect(() => {
     fetchCases();
@@ -90,6 +91,7 @@ const Cases = () => {
       attachment: file,
     }));
     setAttachmentName(file.name);
+    setIsAttached(true);
   };
 
   const handleSubmitCreate = async () => {
@@ -121,7 +123,7 @@ const Cases = () => {
 
     try {
       await axios.put(
-        `https://cmsservice-9e12a2790a1c.herokuapp.com/api/cases/${caseData.caseId}`,
+        `https://cmsservice-9e12a2790a1c.herokuapp.com/api/cases/update`,
         caseData,
         {
           headers: {
