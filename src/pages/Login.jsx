@@ -82,6 +82,13 @@ const Login = () => {
           mt: 8,
         }}
       >
+        <div>
+          <img
+            src="/civilogo.png"
+            alt="Civi Logo"
+            style={{ height: "80px", marginBottom: "20px" }}
+          />
+        </div>
         <Typography component="h1" variant="h5">
           Login
         </Typography>
@@ -143,7 +150,12 @@ const Login = () => {
           >
             Login
           </Button>
-          <MuiLink sx={{ color: "black" }} component={Link} to="/sign-up" variant="body2">
+          <MuiLink
+            sx={{ color: "black" }}
+            component={Link}
+            to="/sign-up"
+            variant="body2"
+          >
             Don't have an account? Sign Up
           </MuiLink>
         </Box>
