@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -7,31 +7,43 @@ import {
   Typography,
   Link as MuiLink,
   Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/userSlice";
-import { useState } from "react";
 
 const validationSchema = yup.object({
-  // username: yup.string().required("Username is required"), // TODO: Uncomment this line when username feature is added
   email: yup
     .string()
     .email("Enter a valid email")
     .required("Email is required"),
-  password: yup.string().required("Password is required"),
+  password: yup
+    .string()
+    .required("Password is required")
+    .min(5, "Password must be at least 5 characters"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Passwords must match")
+    .required("Confirm Password is required"),
+  role: yup.string().required("Role is required"), // Validation for the dropdown
 });
 
 const signUpUser = async (values, dispatch, navigate, setError) => {
   try {
-    const response = await axios.post("https://cmsservice-9e12a2790a1c.herokuapp.com/users/register", values);
+    const response = await axios.post(
+      "https://cmsservice-9e12a2790a1c.herokuapp.com/users/register",
+      { email: values.email, password: values.password, role: values.role } // Include role in the payload
+    );
     const userData = response.data;
+    localStorage.removeItem("user");
     localStorage.setItem("user", JSON.stringify(userData));
-    console.log("🚀 ~ signUpUser ~ axios response :", response)
     localStorage.setItem("isLoggedIn", "true");
     dispatch(setUser(userData));
     navigate("/");
@@ -55,9 +67,10 @@ const SignUp = () => {
 
   const formik = useFormik({
     initialValues: {
-      // username: "", // TODO: Uncomment this line when username feature is added
       email: "",
       password: "",
+      confirmPassword: "",
+      role: "CASEWORKER", 
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
@@ -80,22 +93,6 @@ const SignUp = () => {
           Sign Up
         </Typography>
         <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>
-        {/* // TODO: Uncomment this line when username feature is added */}
-          {/* <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="username"
-            label="Username"
-            name="username"
-            autoComplete="username"
-            autoFocus
-            value={formik.values.username}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.username && Boolean(formik.errors.username)}
-            helperText={formik.touched.username && formik.errors.username}
-          /> */}
           <TextField
             margin="normal"
             required
@@ -125,6 +122,44 @@ const SignUp = () => {
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
           />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="confirmPassword"
+            label="Confirm Password"
+            type="password"
+            id="confirmPassword"
+            value={formik.values.confirmPassword}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={
+              formik.touched.confirmPassword &&
+              Boolean(formik.errors.confirmPassword)
+            }
+            helperText={
+              formik.touched.confirmPassword && formik.errors.confirmPassword
+            }
+          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="role-label">Role</InputLabel>
+            <Select
+              labelId="role-label"
+              id="role"
+              name="role"
+              value={formik.values.role}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.role && Boolean(formik.errors.role)}
+            >
+              <MenuItem value="CASEWORKER">Case Worker</MenuItem>
+            </Select>
+            {formik.touched.role && formik.errors.role && (
+              <Typography color="error" variant="caption">
+                {formik.errors.role}
+              </Typography>
+            )}
+          </FormControl>
           <Button
             type="submit"
             fullWidth
@@ -133,12 +168,12 @@ const SignUp = () => {
           >
             Sign Up
           </Button>
-          <MuiLink component={Link} to="/login" variant="body2">
+          <MuiLink sx={{color: 'black'}} component={Link} to="/login" variant="body2">
             Already have an account? Login
           </MuiLink>
         </Box>
       </Box>
-        {error && <Alert sx={{my: 2}} severity="error">{error}</Alert>}
+      {error && <Alert sx={{ my: 2 }} severity="error">{error}</Alert>}
     </Container>
   );
 };

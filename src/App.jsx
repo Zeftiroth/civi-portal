@@ -52,6 +52,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUser, clearUser } from "./store/userSlice";
 import Appointments from "./pages/Appointments";
 import CaseWorkers from "./pages/CaseWorkers";
+import UserAvatar from "./components/UserAvatar"; // Import the new component
 
 const theme = createTheme({
   palette: {
@@ -59,7 +60,7 @@ const theme = createTheme({
       main: "#C1E1C1", // Customize primary color
     },
     secondary: {
-      main: "#ffffb7 ", // Customize secondary color
+      main: "#ffffb7", // Customize secondary color
     },
   },
   typography: {
@@ -93,22 +94,22 @@ const MainContent = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  const [storedUser, setStoredUser] = useState(JSON.parse(localStorage.getItem("user")));
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("isLoggedIn") === "true");
+  
 
-  // const [username, setUsername] = useState(""); TODO: re-enable this line when username feature is added
-  const [email, setEmail] = useState("");
   const isSignUpOrLoginPage =
     location.pathname === "/sign-up" || location.pathname === "/login";
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    if (storedUser && isLoggedIn) {
-      setEmail(storedUser.email);
-      dispatch(setUser(storedUser));
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      dispatch(setUser(user));
     } else {
       dispatch(clearUser());
     }
-  }, [dispatch]);
+    
+  }, [dispatch, storedUser, isLoggedIn]);
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
@@ -116,6 +117,7 @@ const MainContent = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("user");
     navigate("/login");
   };
 
@@ -189,11 +191,8 @@ const MainContent = () => {
                 CIVI
               </Typography>
               <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <Avatar sx={{ width: 30, height: 30, mr: 1 }}>{getFirstLetter(email)}</Avatar>
-                  <Typography variant="body1">{email}</Typography>
-                </Box>
-                {/* <IconButton style={{ outline: "none" }} color="inherit">
+                <UserAvatar /> 
+                 {/* <IconButton style={{ outline: "none" }} color="inherit">
                   <SettingsIcon />
                 </IconButton> */}
                 <IconButton
