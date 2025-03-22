@@ -45,7 +45,7 @@ import {
   Contacts as ContactsIcon,
   Logout as LogoutIcon,
   Folder as FolderIcon,
-  CalendarMonth as CalendarMonthIcon ,
+  CalendarMonth as CalendarMonthIcon,
 } from "@mui/icons-material";
 import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -86,7 +86,7 @@ const getPathName = (pathname) => {
 };
 
 export const getFirstLetter = (username) => {
-  return username ? username.charAt(0).toUpperCase() : '';
+  return username ? username.charAt(0).toUpperCase() : "";
 };
 
 const MainContent = () => {
@@ -94,9 +94,12 @@ const MainContent = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
-  const [storedUser, setStoredUser] = useState(JSON.parse(localStorage.getItem("user")));
-  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("isLoggedIn") === "true");
-  
+  const [storedUser, setStoredUser] = useState(
+    JSON.parse(localStorage.getItem("user"))
+  );
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem("isLoggedIn") === "true"
+  );
 
   const isSignUpOrLoginPage =
     location.pathname === "/sign-up" || location.pathname === "/login";
@@ -108,7 +111,6 @@ const MainContent = () => {
     } else {
       dispatch(clearUser());
     }
-    
   }, [dispatch, storedUser, isLoggedIn]);
 
   const toggleDrawer = () => {
@@ -185,14 +187,27 @@ const MainContent = () => {
                 component="div"
                 sx={{
                   flexGrow: 1,
-                  marginLeft: isDrawerOpen ? `calc(${drawerWidth}px - 17px)` : "55px",
+                  marginLeft: isDrawerOpen
+                    ? `calc(${drawerWidth}px - 17px)`
+                    : "55px",
                 }}
               >
+              <div style={{display: "flex", alignItems: "center"}}>
+
+              <img
+                src="/civilogo.png" // Path to the logo in the public directory
+                alt="Civi Logo"
+                style={{ height: "35px", width: "40px" }} // Adjust the size as needed
+              />
+              <span style={{ marginLeft: "10px" }}>
                 CIVI
+
+              </span>
+              </div>
               </Typography>
               <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                <UserAvatar /> 
-                 {/* <IconButton style={{ outline: "none" }} color="inherit">
+                <UserAvatar />
+                {/* <IconButton style={{ outline: "none" }} color="inherit">
                   <SettingsIcon />
                 </IconButton> */}
                 <IconButton
@@ -245,24 +260,27 @@ const MainContent = () => {
           >
             <Toolbar />
             <ListItemIcon
-                sx={{
-                  marginLeft:"9px",
-                }}
+              sx={{
+                marginLeft: "9px",
+              }}
+            >
+              <IconButton
+                style={{ outline: "none" }}
+                color="inherit"
+                onClick={toggleDrawer}
               >
-                <IconButton
-                  style={{ outline: "none" }}
-                  color="inherit"
-                  onClick={toggleDrawer}
-                >
-                  <MenuIcon />
-                </IconButton>
-              </ListItemIcon>
+                <MenuIcon />
+              </IconButton>
+            </ListItemIcon>
             <Box sx={{ flexGrow: 1, overflow: "hidden" }}>
               <List>
                 {navItems.map((item, index) => (
                   <ListItem button component={Link} to={item.path} key={index}>
                     <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText sx={{color: 'black'}} primary={item.label} />
+                    <ListItemText
+                      sx={{ color: "black" }}
+                      primary={item.label}
+                    />
                   </ListItem>
                 ))}
               </List>
@@ -284,8 +302,8 @@ const MainContent = () => {
       )}
       <Container
         id="container"
-        sx={{ width: `calc(100vw - ${drawerWidth}px)`, padding: '0px'}}
-        style={{padding: '0px'}}
+        sx={{ width: `calc(100vw - ${drawerWidth}px)`, padding: "0px" }}
+        style={{ padding: "0px" }}
       >
         <Box
           component="main"
@@ -295,7 +313,7 @@ const MainContent = () => {
             ml: isDrawerOpen ? `${drawerWidth}px` : "72px",
             transition: "margin-left 0.3s",
             width: `calc(100vw - ${drawerWidth}px)`,
-            minHeight: `calc(100vh - 149px)`
+            minHeight: `calc(100vh - 149px)`,
           }}
         >
           <Routes>
