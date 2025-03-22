@@ -89,6 +89,13 @@ const SignUp = () => {
           mt: 8,
         }}
       >
+        <div>
+          <img
+            src="/civilogo.png"
+            alt="Civi Logo"
+            style={{ height: "80px", marginBottom: "20px" }}
+          />
+        </div>
         <Typography component="h1" variant="h5">
           Sign Up
         </Typography>
@@ -168,12 +175,21 @@ const SignUp = () => {
           >
             Sign Up
           </Button>
-          <MuiLink sx={{color: 'black'}} component={Link} to="/login" variant="body2">
+          <MuiLink
+            sx={{ color: "black" }}
+            component={Link}
+            to="/login"
+            variant="body2"
+          >
             Already have an account? Login
           </MuiLink>
         </Box>
       </Box>
-      {error && <Alert sx={{ my: 2 }} severity="error">{error}</Alert>}
+      {error && (
+        <Alert sx={{ my: 2 }} severity="error">
+          {error}
+        </Alert>
+      )}
     </Container>
   );
 };
