@@ -7,7 +7,6 @@ const UserAvatar = () => {
     const [email, setEmail] = useState("");
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem("user"));
-        console.log("🚀 ~ useEffect ~ (user.email:", (user.email))
         setEmail(user.email)
     }, []);
   return (
