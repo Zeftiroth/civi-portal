@@ -12,6 +12,9 @@ import {
   MenuItem,
 } from "@mui/material";
 import axios from "axios";
+import { DatePicker } from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 const AppointmentDetailsModal = ({
   open,
@@ -22,13 +25,13 @@ const AppointmentDetailsModal = ({
 }) => {
   const [isEditable, setIsEditable] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [localDate, setLocalDate] = useState("");
+  const [localDate, setLocalDate] = useState(null); // Updated to use a Date object
   const [localTime, setLocalTime] = useState("");
 
   useEffect(() => {
     if (appointmentDetails?.appointmentDateTime) {
       const [date, time] = appointmentDetails.appointmentDateTime.split("T");
-      setLocalDate(date);
+      setLocalDate(new Date(date)); // Convert to Date object
       setLocalTime(time.slice(0, 5)); // Extract HH:mm
     }
   }, [appointmentDetails]);
@@ -42,7 +45,9 @@ const AppointmentDetailsModal = ({
     try {
       const payload = {
         appointmentId: appointmentDetails.appointmentId,
-        appointmentDateTime: `${localDate}T${localTime}`,
+        appointmentDateTime: `${
+          localDate.toISOString().split("T")[0]
+        }T${localTime}`,
         status: appointmentDetails.status,
         location: appointmentDetails.location,
         notes: appointmentDetails.notes,
@@ -97,17 +102,19 @@ const AppointmentDetailsModal = ({
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle>Appointment Details</DialogTitle>
       <DialogContent>
-        <TextField
-          margin="dense"
-          label="Date"
-          name="date"
-          type="date"
-          value={localDate}
-          onChange={(e) => setLocalDate(e.target.value)}
-          fullWidth
-          disabled={!isEditable}
-          InputLabelProps={{ shrink: true }}
-        />
+        <div style={{ marginTop: "1em" }}>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="Date"
+              value={localDate}
+              onChange={(newValue) => setLocalDate(newValue)}
+              disabled={!isEditable}
+              renderInput={(params) => (
+                <TextField {...params} margin="dense" fullWidth />
+              )}
+            />
+          </LocalizationProvider>
+        </div>
         <TextField
           margin="dense"
           label="Time"
@@ -198,7 +205,7 @@ const AppointmentDetailsModal = ({
             <Button
               variant="contained"
               onClick={handleDelete}
-              color="secondary"
+              color="error"
               disabled={loading}
             >
               Delete

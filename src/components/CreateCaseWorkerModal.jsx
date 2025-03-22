@@ -85,11 +85,11 @@ const CreateCaseWorkerModal = ({
         />
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" onClick={handleClose} color="secondary">
-          Cancel
-        </Button>
         <Button variant="contained" onClick={handleSubmit} color="primary">
           Save
+        </Button>
+        <Button variant="contained" onClick={handleClose} color="secondary">
+          Cancel
         </Button>
       </DialogActions>
     </Dialog>

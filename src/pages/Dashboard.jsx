@@ -10,23 +10,19 @@ import Tasks from "../components/dashboard/Task";
 const Dashboard = () => {
   return (
     <Box sx={{ p: 2, overflow: "hidden" }}>
-      {/* Welcome Section */}
 
       <UserWelcomeCard />
 
-      {/* Main Content */}
       <Grid2 container spacing={2} sx={{ margin: 0, width: "100%" }}>
-        {/* Left Sidebar */}
-        <Grid2 item xs={12} md={4}>
+        {/* <Grid2 item xs={12} md={4}>
           <Agenda />
           <RecentSessions />
           <KeyIncidents />
-        </Grid2>
+        </Grid2> */}
 
-        {/* Right Main Section */}
         <Grid2 item xs={12} md={8}>
           <DashSummary />
-          <Tasks />
+          {/* <Tasks /> */}
         </Grid2>
       </Grid2>
     </Box>

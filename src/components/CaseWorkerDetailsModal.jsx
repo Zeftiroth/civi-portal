@@ -69,7 +69,7 @@ const CaseWorkerDetailsModal = ({
       };
 
       await axios.put(
-        `https://cmsservice-9e12a2790a1c.herokuapp.com/update-caseworker/${caseWorkerDetails.caseWorkerId}`,
+        `https://cmsservice-9e12a2790a1c.herokuapp.com/update-caseworker`,
         payload,
         {
           headers: {
@@ -257,12 +257,13 @@ const CaseWorkerDetailsModal = ({
             </Button>
             <Button
               variant="contained"
-              onClick={handleClose}
+              onClick={toggleEdit}
               color="secondary"
               disabled={loading}
             >
               Cancel
             </Button>
+            <Divider />
             <Button
               variant="contained"
               onClick={handleDelete}
@@ -273,7 +274,7 @@ const CaseWorkerDetailsModal = ({
             </Button>
           </>
         ) : (
-            <>
+            <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
             { !assigningCase ?
 
             <Button
@@ -300,7 +301,7 @@ const CaseWorkerDetailsModal = ({
           >
             Edit
           </Button>
-            </>
+            </div>
         )}
       </DialogActions>
     </Dialog>
