@@ -6,9 +6,12 @@ import { useEffect, useState } from "react";
 const UserAvatar = () => {
     const [email, setEmail] = useState("");
     useEffect(() => {
-        const user = JSON.parse(localStorage.getItem("user"));
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user) {
+
         setEmail(user.email)
-    }, []);
+      }
+    }, [user]);
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Avatar sx={{ width: 30, height: 30, mr: 1 }}>
